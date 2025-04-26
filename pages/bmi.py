@@ -44,4 +44,4 @@ else:
 st.markdown("---")
 st.page_link("main.py",label="[⬅️ Back]")
 
-sr.write("ver 26/4/25")
+st.write("ver 26/4/25")
