@@ -94,7 +94,7 @@ st.markdown(f'<div class="directory-info">Current Directory: {st.session_state.c
 # Terminal output
 st.markdown(f'<div class="terminal">{st.session_state.terminal_history}</div>', unsafe_allow_html=True)
 
-# Command Input
+
 # Command Input
 if st.session_state.connected:
     command = st.text_input("Enter your command")
@@ -118,9 +118,19 @@ if st.session_state.connected:
                     # Update server directory
                     st.session_state.current_directory = new_dir
 
-                    # Update terminal history
-                    st.session_state.terminal_history += f"> {command}\n{output}\n"
-                    st.rerun()
+                    # Handle "call" command differently
+                    if cmd.lower() == "call":
+                        # Parse output lines
+                        st.session_state.terminal_history += f"> {command}\n"
+                        items = output.split("\n")
+                        for item in items:
+                            st.session_state.terminal_history += f"{item}\n"
+                        st.rerun()
+
+                    else:
+                        # Normal commands
+                        st.session_state.terminal_history += f"> {command}\n{output}\n"
+                        st.rerun()
 
                 else:
                     st.session_state.connected = False
@@ -142,6 +152,5 @@ else:
 st.markdown("---")
 st.markdown('<h3 id="download-rec">Download Receive.py</h3>', unsafe_allow_html=True)
 st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
-st.page_link("main.py",label="[⬅️ Back]")
-st.caption("Version 0.1 (Alpha) | Report bugs to ismerio on Discord")
+st.caption("Version 0.2 (Alpha) | Report bugs to ismerio on Discord")
 
