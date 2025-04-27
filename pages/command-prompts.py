@@ -79,32 +79,48 @@ st.markdown(f'<div class="directory-info">Current Directory: {st.session_state.c
 st.markdown(f'<div class="terminal">{st.session_state.terminal_history}</div>', unsafe_allow_html=True)
 
 # Command Input
+# Command Input
 if st.session_state.connected:
     command = st.text_input("Enter your command")
 
     if st.button("Execute Command"):
         if command:
             try:
-                cmd = command.strip()
+                # Before sending command, check if server is alive
+                ping_check = requests.post(f"{ip_address}/connect", json={"command": "connect"}, timeout=5)
 
-                response = requests.post(f"{ip_address}/command", json={"command": cmd})
-                data = response.json()
+                if ping_check.status_code == 200:
+                    # If server responds OK, continue normal
+                    cmd = command.strip()
 
-                output = data.get("output", "No output")
-                new_dir = data.get("current_directory", st.session_state.current_directory)
+                    response = requests.post(f"{ip_address}/command", json={"command": cmd}, timeout=10)
+                    data = response.json()
 
-                # Update server directory
-                st.session_state.current_directory = new_dir
+                    output = data.get("output", "No output")
+                    new_dir = data.get("current_directory", st.session_state.current_directory)
 
-                # Update terminal history
-                st.session_state.terminal_history += f"> {command}\n{output}\n"
-                st.rerun()
+                    # Update server directory
+                    st.session_state.current_directory = new_dir
+
+                    # Update terminal history
+                    st.session_state.terminal_history += f"> {command}\n{output}\n"
+                    st.rerun()
+
+                else:
+                    st.session_state.connected = False
+                    st.error("Server not responding. Disconnected!")
+                    st.session_state.terminal_history += "Server not responding. Disconnected.\n"
+                    st.rerun()
 
             except Exception as e:
-                st.session_state.terminal_history += f"Error executing command: {e}\n"
+                # If any error (timeout, disconnect, etc)
+                st.session_state.connected = False
+                st.error(f"Disconnected: {e}")
+                st.session_state.terminal_history += f"Disconnected: {e}\n"
                 st.rerun()
 else:
     st.warning("Please connect to a server first.")
+
 
 # Footer
 st.markdown("---")
