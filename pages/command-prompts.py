@@ -143,4 +143,5 @@ st.markdown("---")
 st.markdown('<h3 id="download-rec">Download Receive.py</h3>', unsafe_allow_html=True)
 st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
 st.caption("Version 0.1 (Alpha) | Report bugs to ismerio on Discord")
+st.write("hello")
 
