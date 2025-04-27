@@ -48,16 +48,32 @@ with col1:
     if st.button("Connect"):
         if ip_address:
             try:
-                response = requests.post(f"{ip_address}/connect", json={"command": "connect"})
-                data = response.json()
-                st.session_state.connected = True
-                st.session_state.current_directory = data.get("current_directory", "Unknown")
-                st.session_state.terminal_history += "Connected to server.\n"
-                st.success("Connected!")
+                # Try ping server first
+                response = requests.post(f"{ip_address}/connect", json={"command": "connect"}, timeout=5)
+                if response.status_code == 200:
+                    data = response.json()
+                    st.session_state.connected = True
+                    st.session_state.current_directory = data.get("current_directory", "Unknown")
+                    st.session_state.terminal_history += "Connected to server.\n"
+                    st.success("Connected!")
+
+                else:
+                    # If server answers weird, show error
+                    st.error("Could not connect to server. Is your rec.py running?")
+                    st.session_state.connected = False
+                    # Scroll down hint
+                    st.markdown('<a href="#download-rec" style="color:red;font-weight:bold;">⬇️ Scroll down to Download Receive.py</a>', unsafe_allow_html=True)
+
             except Exception as e:
-                st.error(f"Connection error: {e}")
+                # If cannot reach server at all
+                st.error(f"Connection failed: {e}")
+                st.session_state.connected = False
+                # Scroll down hint
+                st.markdown('<a href="#download-rec" style="color:red;font-weight:bold;">⬇️ Scroll down to Download Receive.py</a>', unsafe_allow_html=True)
+
         else:
             st.warning("Please enter the server IP.")
+
 
 with col2:
     if st.button("Disconnect"):
@@ -124,5 +140,7 @@ else:
 
 # Footer
 st.markdown("---")
-st.link_button("Download recive.py","https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
+st.markdown('<h3 id="download-rec">Download Receive.py</h3>', unsafe_allow_html=True)
+st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
 st.caption("Version 0.1 (Alpha) | Report bugs to ismerio on Discord")
+
