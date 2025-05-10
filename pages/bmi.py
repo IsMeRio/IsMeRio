@@ -31,7 +31,7 @@ if kg > 0 and height > 0:
     categoryshow.write(f"Category: **{result}**")
 
     image_path = f"img/{Gender.lower()}{imgnum}.png"
-    imgshow.image(image_path, width=230)
+    imgshow.image(image_path, width=250)
 
 else:
     if kg == 0 and height > 0:
@@ -43,5 +43,3 @@ else:
 
 st.markdown("---")
 st.page_link("main.py",label="[⬅️ Back]")
-
-st.write("ver 0.2")

@@ -91,8 +91,6 @@ with col2:
 # Show Current Directory from Server
 st.markdown(f'<div class="directory-info">Current Directory: {st.session_state.current_directory}</div>', unsafe_allow_html=True)
 
-#help
-st.caption("use help to view all command")
 # Terminal output
 st.markdown(f'<div class="terminal">{st.session_state.terminal_history}</div>', unsafe_allow_html=True)
 
@@ -154,5 +152,5 @@ else:
 st.markdown("---")
 st.markdown('<h3 id="download-rec">Download Receive.py</h3>', unsafe_allow_html=True)
 st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
-st.page_link("main.py",label="[⬅️ Back]")
 st.caption("Version 0.2 (Alpha) | Report bugs to ismerio on Discord")
+
