@@ -18,5 +18,3 @@ st.markdown("<h1 style='text-align: center;'>IsMeRio Main Page</h1>", unsafe_all
 st.page_link("pages/bmi.py",label="BMI Calculate")
 st.page_link("pages/command-prompts.py",label="command prompts")
 st.page_link("pages/ai-caption.py",label="Ai image caption")
-
-st.write("te2")
