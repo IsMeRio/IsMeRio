@@ -19,4 +19,4 @@ st.page_link("pages/bmi.py",label="BMI Calculate")
 st.page_link("pages/command-prompts.py",label="command prompts")
 st.page_link("pages/ai-caption.py",label="Ai image caption")
 
-st.write("test")
+st.write("test2")
