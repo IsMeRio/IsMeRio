@@ -30,3 +30,6 @@ if uploaded_file is not None:
         caption = processor.decode(out[0], skip_special_tokens=True)
 
     st.success(f"📝 Caption: **{caption}**")
+
+st.write("---")
+st.page_link("main.py",label="[⬅️ Back]")
