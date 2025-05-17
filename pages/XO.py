@@ -109,32 +109,10 @@ def apply_move(idx):
 
 # --- UI Layout ---
 st.set_page_config(page_title="Tic-Tac-Toe", layout="centered")
-st.markdown("""
-    <style>
-    .main {
-        background-color: #f9fafb;
-        color: #333;
-    }
-    div.stButton > button {
-        height: 100px;
-        width: 100px;
-        font-size: 36px !important;
-        border-radius: 12px;
-        background-color: #e2e8f0;
-    }
-    div.stButton > button:hover {
-        background-color: #cbd5e1;
-    }
-    .block-container {
-        padding: 2rem 1rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 st.title("🎮 Minimax Tic-Tac-Toe")
 
 with st.sidebar:
-    st.header("⚙️ Game Settings")
+    st.header("Game Settings")
     disable_inputs = st.session_state.game_running
 
     st.session_state.mode = st.radio(
@@ -152,29 +130,37 @@ with st.sidebar:
     )
 
     if not st.session_state.game_running:
-        if st.button("▶️ Start", use_container_width=True):
+        if st.button("▶️ Start"):
             reset_game()
             st.session_state.game_running = True
             st.rerun()
     else:
-        if st.button("⏹ Stop", use_container_width=True):
+        if st.button("⏹ Stop"):
             st.session_state.game_running = False
             reset_game()
             st.rerun()
 
     if st.session_state.mode == "Player vs Player":
-        st.button("↩️ Undo", disabled=not st.session_state.game_running or not st.session_state.history, use_container_width=True)
+        st.button("↩️ Undo", disabled=not st.session_state.game_running or not st.session_state.history)
     else:
-        st.button("↩️ Undo", disabled=True, use_container_width=True)
+        st.button("↩️ Undo", disabled=True)
 
-    st.markdown("### 📊 Score")
+    st.markdown("### Score")
     st.write(f"You (X): {st.session_state.scores['X']}")
     st.write(f"AI (O): {st.session_state.scores['O']}")
     st.write(f"Draws: {st.session_state.scores['Draw']}")
 
 # --- Board UI ---
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center;'>Game Board</h3>", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    div.stButton > button {
+        height: 80px;
+        width: 80px;
+        font-size: 30px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 cols = st.columns(3)
 for i in range(3):
     for j in range(3):
@@ -193,10 +179,8 @@ if st.session_state.mode == "Player vs AI" and st.session_state.current_player =
 # --- Status ---
 if st.session_state.winner:
     if st.session_state.winner == "Draw":
-        st.success("🤝 It's a draw!")
+        st.success("It's a draw!")
     else:
-        emoji = "😎" if st.session_state.winner == "X" else "🤖"
-        st.success(f"🎉 {st.session_state.winner} wins! {emoji}")
+        st.success(f"{st.session_state.winner} wins!")
 else:
-    if st.session_state.game_running:
-        st.info(f"🕹️ Turn: {st.session_state.current_player}")
+    st.info(f"Turn: {st.session_state.current_player}")
