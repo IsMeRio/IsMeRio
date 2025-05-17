@@ -149,6 +149,7 @@ with st.sidebar:
     st.write(f"You (X): {st.session_state.scores['X']}")
     st.write(f"AI (O): {st.session_state.scores['O']}")
     st.write(f"Draws: {st.session_state.scores['Draw']}")
+    st.page_link("main.py",label="[⬅️ Back]")
 
 # --- Board UI ---
 st.markdown("""
