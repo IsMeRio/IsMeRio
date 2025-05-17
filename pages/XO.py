@@ -18,12 +18,17 @@ if "history" not in st.session_state:
     st.session_state.history = []
 if "scores" not in st.session_state:
     st.session_state.scores = {"X": 0, "O": 0, "Draw": 0}
+if "difficulty" not in st.session_state:
+    st.session_state.difficulty = "Normal"
+if "board_size" not in st.session_state:
+    st.session_state.board_size = "3x3"
 
 # --- Utility Functions ---
 def available_moves(board):
     return [i for i, v in enumerate(board) if v == ""]
 
 def check_winner(board):
+    size = 3  # Only supports 3x3 for now
     wins = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8],
         [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -129,6 +134,22 @@ with st.sidebar:
         disabled=disable_inputs or st.session_state.mode != "Player vs AI"
     )
 
+    st.selectbox(
+        "AI Difficulty",
+        ["Easy", "Normal", "Hard"],
+        index=["Easy", "Normal", "Hard"].index(st.session_state.difficulty),
+        key="difficulty",
+        disabled=disable_inputs or st.session_state.mode != "Player vs AI"
+    )
+
+    st.selectbox(
+        "Board Size",
+        ["3x3", "6x6", "9x9"],
+        index=["3x3", "6x6", "9x9"].index(st.session_state.board_size),
+        key="board_size",
+        disabled=disable_inputs
+    )
+
     if not st.session_state.game_running:
         if st.button("▶️ Start"):
             reset_game()
@@ -149,7 +170,6 @@ with st.sidebar:
     st.write(f"You (X): {st.session_state.scores['X']}")
     st.write(f"AI (O): {st.session_state.scores['O']}")
     st.write(f"Draws: {st.session_state.scores['Draw']}")
-    st.page_link("main.py",label="[⬅️ Back]")
 
 # --- Board UI ---
 st.markdown("""
