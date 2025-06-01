@@ -1,42 +1,28 @@
 import streamlit as st
 import random
 
-# --- Game Initialization ---
-if "board" not in st.session_state:
-    st.session_state.board = [""] * 9
-if "winner" not in st.session_state:
-    st.session_state.winner = None
-if "current_player" not in st.session_state:
-    st.session_state.current_player = "X"
-if "first_player" not in st.session_state:
-    st.session_state.first_player = "You (X)"
-if "game_running" not in st.session_state:
-    st.session_state.game_running = False
-if "mode" not in st.session_state:
-    st.session_state.mode = "Player vs AI"
-if "history" not in st.session_state:
-    st.session_state.history = []
-if "scores" not in st.session_state:
-    st.session_state.scores = {"X": 0, "O": 0, "Draw": 0}
-if "difficulty" not in st.session_state:
-    st.session_state.difficulty = "Normal"
-if "board_size" not in st.session_state:
-    st.session_state.board_size = "3x3"
-
 # --- Utility Functions ---
+def get_board_size():
+    return int(st.session_state.board_size.split("x")[0])
+
 def available_moves(board):
     return [i for i, v in enumerate(board) if v == ""]
 
 def check_winner(board):
-    size = 3  # Only supports 3x3 for now
-    wins = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
-    ]
-    for a, b, c in wins:
-        if board[a] and board[a] == board[b] == board[c]:
-            return board[a]
+    size = get_board_size()
+    lines = []
+
+    for i in range(size):
+        lines.append([i * size + j for j in range(size)])  # Row
+        lines.append([j * size + i for j in range(size)])  # Column
+
+    lines.append([i * size + i for i in range(size)])  # Diagonal TL-BR
+    lines.append([i * size + (size - 1 - i) for i in range(size)])  # Diagonal TR-BL
+
+    for line in lines:
+        if board[line[0]] != "" and all(board[i] == board[line[0]] for i in line):
+            return board[line[0]]
+
     if all(cell != "" for cell in board):
         return "Draw"
     return None
@@ -74,6 +60,10 @@ def minimax(board, depth, is_max, alpha, beta):
         return best
 
 def best_move():
+    size = get_board_size()
+    if size != 3:
+        return random.choice(available_moves(st.session_state.board))
+
     best_val = -float("inf")
     move = None
     for i in available_moves(st.session_state.board):
@@ -86,21 +76,12 @@ def best_move():
     return move
 
 def reset_game():
-    st.session_state.board = [""] * 9
+    size = get_board_size()
+    st.session_state.board = [""] * (size * size)
     st.session_state.winner = None
     st.session_state.current_player = "X" if st.session_state.first_player == "You (X)" else "O"
     st.session_state.history = []
 
-# --- AI Logic ---
-def auto_ai_turn():
-    if st.session_state.winner or not st.session_state.game_running:
-        return
-    if st.session_state.current_player == "O":
-        move = best_move()
-        if move is not None:
-            apply_move(move)
-
-# --- Move Logic ---
 def apply_move(idx):
     if st.session_state.board[idx] == "" and not st.session_state.winner:
         st.session_state.history.append(st.session_state.board[:])
@@ -112,9 +93,46 @@ def apply_move(idx):
         else:
             st.session_state.current_player = "O" if st.session_state.current_player == "X" else "X"
 
-# --- UI Layout ---
+def auto_ai_turn():
+    if st.session_state.winner or not st.session_state.game_running:
+        return
+    if st.session_state.current_player == "O":
+        move = best_move()
+        if move is not None:
+            apply_move(move)
+
+# --- Session State Initialization ---
+if "board" not in st.session_state:
+    st.session_state.board = [""] * 9
+if "winner" not in st.session_state:
+    st.session_state.winner = None
+if "current_player" not in st.session_state:
+    st.session_state.current_player = "X"
+if "first_player" not in st.session_state:
+    st.session_state.first_player = "You (X)"
+if "game_running" not in st.session_state:
+    st.session_state.game_running = False
+if "mode" not in st.session_state:
+    st.session_state.mode = "Player vs AI"
+if "history" not in st.session_state:
+    st.session_state.history = []
+if "scores" not in st.session_state:
+    st.session_state.scores = {"X": 0, "O": 0, "Draw": 0}
+if "difficulty" not in st.session_state:
+    st.session_state.difficulty = "Normal"
+if "board_size" not in st.session_state:
+    st.session_state.board_size = "3x3"
+if "last_board_size" not in st.session_state:
+    st.session_state.last_board_size = st.session_state.board_size
+
+# --- Detect Board Size Change ---
+if st.session_state.board_size != st.session_state.last_board_size:
+    st.session_state.last_board_size = st.session_state.board_size
+    reset_game()
+
+# --- UI ---
 st.set_page_config(page_title="Tic-Tac-Toe", layout="centered")
-st.title("🎮 Minimax Tic-Tac-Toe")
+st.title("\U0001F3AE Minimax Tic-Tac-Toe")
 
 with st.sidebar:
     st.header("Game Settings")
@@ -151,56 +169,56 @@ with st.sidebar:
     )
 
     if not st.session_state.game_running:
-        if st.button("▶️ Start"):
+        if st.button("\u25B6\uFE0F Start"):
             reset_game()
             st.session_state.game_running = True
             st.rerun()
     else:
-        if st.button("⏹ Stop"):
+        if st.button("\u23F9 Stop"):
             st.session_state.game_running = False
             reset_game()
             st.rerun()
 
     if st.session_state.mode == "Player vs Player":
-        st.button("↩️ Undo", disabled=not st.session_state.game_running or not st.session_state.history)
+        st.button("\u21A9\uFE0F Undo", disabled=not st.session_state.game_running or not st.session_state.history)
     else:
-        st.button("↩️ Undo", disabled=True)
+        st.button("\u21A9\uFE0F Undo", disabled=True)
 
     st.markdown("### Score")
     st.write(f"You (X): {st.session_state.scores['X']}")
     st.write(f"AI (O): {st.session_state.scores['O']}")
     st.write(f"Draws: {st.session_state.scores['Draw']}")
 
-    st.write("---")
-    st.page_link("main.py",label="[⬅️ Back]")
-
-# --- Board UI ---
+# --- Style ---
 st.markdown("""
     <style>
     div.stButton > button {
-        height: 80px;
-        width: 80px;
-        font-size: 30px !important;
+        height: 60px;
+        width: 60px;
+        font-size: 24px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-cols = st.columns(3)
-for i in range(3):
-    for j in range(3):
-        idx = i * 3 + j
-        with cols[j]:
-            if st.button(st.session_state.board[idx] or " ", key=f"cell{idx}"):
-                if st.session_state.game_running and st.session_state.board[idx] == "" and not st.session_state.winner:
-                    apply_move(idx)
-                    st.rerun()
+# --- Draw Game Board ---
+size = get_board_size()
+for i in range(size):
+    cols = st.columns(size)
+    for j in range(size):
+        idx = i * size + j
+        if idx < len(st.session_state.board):
+            with cols[j]:
+                if st.button(st.session_state.board[idx] or " ", key=f"cell{idx}"):
+                    if st.session_state.game_running and st.session_state.board[idx] == "" and not st.session_state.winner:
+                        apply_move(idx)
+                        st.rerun()
 
-# --- Auto AI Move if Needed ---
+# --- AI Turn ---
 if st.session_state.mode == "Player vs AI" and st.session_state.current_player == "O" and st.session_state.game_running:
     auto_ai_turn()
     st.rerun()
 
-# --- Status ---
+# --- Game Status ---
 if st.session_state.winner:
     if st.session_state.winner == "Draw":
         st.success("It's a draw!")
