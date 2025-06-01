@@ -133,6 +133,7 @@ if st.session_state.board_size != st.session_state.last_board_size:
 # --- UI ---
 st.set_page_config(page_title="Tic-Tac-Toe", layout="centered")
 st.title("\U0001F3AE Minimax Tic-Tac-Toe")
+st.caption("ver 3")
 
 with st.sidebar:
     st.header("Game Settings")
