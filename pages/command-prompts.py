@@ -151,7 +151,7 @@ else:
 # Footer
 st.markdown("---")
 st.markdown('<h3 id="download-rec">Download Receive.py</h3>', unsafe_allow_html=True)
-st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/ea1bbf9c6760cc6fbe43931a7eb0e9cd2859df43/rec.py")
+st.link_button("📥 Download Receive.py", "https://github.com/IsMeRio/ismerio-command-prompts-streamlit/blob/main/rec.py")
 st.page_link("main.py",label="[⬅️ Back]")
-st.caption("Version 0.2 (Alpha) | Report bugs to ismerio on Discord")
+st.caption("Version 0.25 (Alpha) | Report bugs to ismerio on Discord")
 
