@@ -75,8 +75,8 @@ try:
 
         if show_arcs:
             arc_data = pd.DataFrame([{
-                "from_lon": 0,
-                "from_lat": 0,
+                "from_lon": 105 ,
+                "from_lat": 35,
                 "to_lon": row["longitude"],
                 "to_lat": row["latitude"],
             } for _, row in df.iterrows()])
